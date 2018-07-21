@@ -1,5 +1,4 @@
 import org.asynchttpclient.*;
-import org.asynchttpclient.proxy.ProxyServer;
 
 import java.util.*;
 import java.util.concurrent.Future;
@@ -26,22 +25,17 @@ public class Test
             makeGetRequest(term);
             Thread.sleep(new Random().nextInt(1000));
         }
-
-
     }
 
     public void initConfig()
     {
-        Realm.Builder realm = new Realm.Builder("username",
-                "password");
-        realm.setScheme(Realm.AuthScheme.BASIC);
-        ProxyServer.Builder proxyServer = new ProxyServer.Builder(
-                "host", 999999);
-        proxyServer.setRealm(realm);
 
         // TODO : make provision to set custom headers for https requests before sending
         AsyncHttpClientConfig clientConfig = new DefaultAsyncHttpClientConfig.Builder()
-                .setProxyServer(proxyServer).build();
+                .setProxyServer(ProxyMeshClient.getProxyServer())
+                .addRequestFilter(new ProxyMeshClient())
+                .build();
+
         asyncHttpClient = asyncHttpClient(clientConfig);
     }
 
@@ -59,7 +53,7 @@ public class Test
         List<Param> paramList = new ArrayList<>(1);
         paramList.add(new Param("q", term));
 
-        String url = "https://www.google.com/search";
+        String url = "http://www.google.com/search";
 
         Future<Integer> whenStatusCode = asyncHttpClient.prepareGet(url)
                 .setQueryParams(paramList).execute(new GetRequestAsyncCompletionHandler(term));
