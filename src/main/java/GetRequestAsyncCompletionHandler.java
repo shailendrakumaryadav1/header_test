@@ -17,6 +17,7 @@ public class GetRequestAsyncCompletionHandler extends AsyncCompletionHandler<Int
         System.out.println("Request for term = " + term + " received.");
         System.out.println("Status Code : " + response.getStatusCode());
         System.out.println("Response : " + response.getResponseBody());
+        System.out.println("X-ProxyMesh-IP : " + response.getHeader("X-ProxyMesh-IP"));
         doSomeProcessing(response.getResponseBody());
         return 200;
     }
